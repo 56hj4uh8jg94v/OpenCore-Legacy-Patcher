@@ -29,15 +29,23 @@ class ModernWireless(BaseHardware):
         """
         Targeting Modern Wireless
         """
-        return isinstance(self._computer.wifi, device_probe.Broadcom) and (
+        # Detect Broadcom wireless network card
+        bcmwl_condition = isinstance(self._computer.wifi, device_probe.Broadcom) and (
             self._computer.wifi.chipset in [
                 device_probe.Broadcom.Chipsets.AirPortBrcm4360,
                 device_probe.Broadcom.Chipsets.AirportBrcmNIC,
                 # We don't officially support this chipset, however we'll throw a bone to hackintosh users
                 device_probe.Broadcom.Chipsets.AirPortBrcmNICThirdParty,
-            ]
-        )
+        ]
+    )
 
+        # Detect Intel wireless network card
+        intelwl_condition = isinstance(self._computer.wifi, device_probe.IntelWirelessCard) and (
+            self._computer.wifi.chipset in [
+                device_probe.IntelWirelessCard.Chipsets.IntelWirelessIDs,
+        ]
+    )
+        return bcmwl_condition or intelwl_condition
 
     def native_os(self) -> bool:
         """
